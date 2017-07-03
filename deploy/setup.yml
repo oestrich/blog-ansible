@@ -4,6 +4,7 @@
   hosts: all
   vars:
   roles:
+    - { role: dev-sec.ssh-hardening, become: yes, tags: ['ssh'] }
     - { role: geerlingguy.nginx, become: yes, tags: ['nginx'] }
     - { role: geerlingguy.ruby, become: yes, tags: ['ruby'] }
     - { role: sites, tags: ['nginx', 'sites'] }

@@ -65,3 +65,9 @@ sites:
     repo: https://github.com/oestrich/oestrich.org.git
     command: |
       rsync -r . $PUBLIC_WWW
+
+ssh_permit_tunnel: true
+ssh_allow_tcp_forwarding: true
+ssh_allow_agent_forwarding: true
+ssh_print_motd: true
+ssh_print_last_log: true
