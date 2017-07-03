@@ -1,0 +1,15 @@
+GIT_REPO=$HOME/repos/{{ item.name }}
+TMP_GIT_CLONE=$HOME/tmp/{{ item.name }}
+PUBLIC_WWW=$HOME/sites/{{ item.name }}
+
+unset GIT_DIR
+
+git clone $GIT_REPO $TMP_GIT_CLONE
+
+cd $TMP_GIT_CLONE
+
+{{ item.command }}
+
+rm -Rf $TMP_GIT_CLONE
+
+exit

@@ -1,0 +1,4 @@
+- src: smartlogic.github_keys
+  version: 0.1
+- src: geerlingguy.nginx
+  version: 2.1.0

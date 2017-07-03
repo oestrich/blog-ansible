@@ -1,0 +1,117 @@
+---
+- name: Create the deploy user
+  user:
+    name: deploy
+    shell: /bin/bash
+    password: "*"
+  become: true
+
+- name: Allow 'deploy' to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^deploy'
+    line: 'deploy ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
+  become: true
+
+- name: Required packages
+  apt: pkg={{ item }} state=present force="yes"  update_cache="yes"
+  with_items:
+    - nodejs
+    - git
+    - build-essential
+    - libffi-dev
+    - libgdbm-dev
+    - libncurses5-dev
+    - libreadline-dev
+    - libreadline6-dev
+    - libtinfo-dev
+    - libyaml-dev
+    - libssl-dev
+    - libyaml-dev
+    - libxml2
+    - libxml2-dev
+    - libxslt1-dev
+  tags: ruby
+  become: true
+
+- name: Create repo folder
+  file:
+    path: "/home/deploy/repos"
+    state: directory
+    mode: 0755
+  become_user: deploy
+  become: true
+
+- name: Create site folder
+  file:
+    path: "/home/deploy/sites"
+    state: directory
+    mode: 0755
+  become_user: deploy
+  become: true
+
+- name: Create tmp folder
+  file:
+    path: "/home/deploy/tmp"
+    state: directory
+    mode: 0755
+  become_user: deploy
+  become: true
+
+- name: Create repo folders
+  file:
+    path: "/home/deploy/repos/{{item.name}}"
+    state: directory
+    mode: 0755
+  become_user: deploy
+  become: true
+  with_items: "{{ sites }}"
+
+- name: Create site folders
+  file:
+    path: "/home/deploy/sites/{{item.name}}"
+    state: directory
+    mode: 0755
+  become_user: deploy
+  become: true
+  with_items: "{{ sites }}"
+
+- name: Create bare git repos
+  command: git init --bare
+  args:
+    chdir: "/home/deploy/repos/{{item.name}}"
+    creates: "/home/deploy/repos/{{item.name}}/config"
+  with_items: "{{ sites }}"
+  become_user: deploy
+  become: true
+
+- name: Template post-receive hook
+  template:
+    src: "templates/post-receive.j2"
+    dest: "/home/deploy/repos/{{item.name}}/hooks/post-receive"
+    mode: 0755
+  with_items: "{{ sites }}"
+  become_user: deploy
+  become: true
+
+- name: Set remote url and pull latest
+  shell: |
+    git remote add origin {{item.repo}}
+    git fetch origin master:master
+    touch /home/deploy/repos/{{item.name}}/remote
+  args:
+    chdir: "/home/deploy/repos/{{item.name}}"
+    creates: "/home/deploy/repos/{{item.name}}/remote"
+  with_items: "{{ sites }}"
+  become_user: deploy
+  become: true
+
+- name: Run the post-receive hook once
+  command: "sh /home/deploy/repos/{{item.name}}/hooks/post-receive"
+  args:
+    creates: "/home/deploy/sites/{{item.name}}/index.html"
+  with_items: "{{ sites }}"
+  become_user: deploy
+  become: true

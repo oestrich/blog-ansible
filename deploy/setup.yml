@@ -1,0 +1,10 @@
+---
+- name: Setup for oestrich.org, blog.oestrich.org
+  gather_facts: yes
+  hosts: all
+  vars:
+  roles:
+    - { role: geerlingguy.nginx, become: yes, tags: ['nginx'] }
+    - { role: geerlingguy.ruby, become: yes, tags: ['ruby'] }
+    - { role: sites, tags: ['nginx', 'sites'] }
+    - { role: smartlogic.github_keys, tags: ['user'] }

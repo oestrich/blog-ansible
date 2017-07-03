@@ -1,0 +1,29 @@
+github_keys_create_install_user: false
+github_keys_install_user: deploy
+github_keys_github_users:
+  - oestrich
+
+nginx_remove_default_vhost: true
+
+nginx_vhosts:
+  - listen: "80"
+    server_name: "blog.oestrich.org"
+    root: "/home/deploy/sites/blog.oestrich.org/"
+    index: "index.html"
+    filename: "blog.oestrich.org.conf"
+  - listen: "80"
+    server_name: "oestrich.org"
+    root: "/home/deploy/sites/oestrich.org/"
+    index: "index.html"
+    filename: "oestrich.org.conf"
+
+sites:
+  - name: blog.oestrich.org
+    repo: https://github.com/oestrich/blog.oestrich.org.git
+    command: |
+      bundle install --deployment
+      bundle exec jekyll build -s $TMP_GIT_CLONE -d $PUBLIC_WWW
+  - name: oestrich.org
+    repo: https://github.com/oestrich/oestrich.org.git
+    command: |
+      rsync -r . $PUBLIC_WWW
