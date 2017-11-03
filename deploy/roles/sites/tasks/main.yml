@@ -18,6 +18,8 @@
 - name: Required packages
   apt: pkg={{ item }} state=present force="yes"  update_cache="yes"
   with_items:
+    - mkdocs
+    - python3-pip
     - nodejs
     - git
     - build-essential
@@ -34,6 +36,12 @@
     - libxml2-dev
     - libxslt1-dev
   tags: ruby
+  become: true
+
+- name: Install mkdocs theme
+  pip:
+    name: mkdocs-material
+    executable: pip3
   become: true
 
 - name: Create repo folder

@@ -54,6 +54,11 @@ nginx_vhosts:
     root: "/home/deploy/sites/oestrich.org/"
     index: "index.html"
     filename: "oestrich.org.conf"
+  - listen: "80"
+    server_name: "exventure.org"
+    root: "/home/deploy/sites/exventure.org/"
+    index: "index.html"
+    filename: "exventure.org.conf"
 
 sites:
   - name: blog.oestrich.org
@@ -65,6 +70,12 @@ sites:
     repo: https://github.com/oestrich/oestrich.org.git
     command: |
       rsync -r . $PUBLIC_WWW
+  - name: exventure.org
+    repo: https://github.com/oestrich/ex_venture.git
+    command: |
+      export LC_ALL=C.UTF-8
+      export LANG=C.UTF-8
+      mkdocs build -d $PUBLIC_WWW
 
 ssh_permit_tunnel: true
 ssh_allow_tcp_forwarding: true
