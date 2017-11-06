@@ -73,6 +73,13 @@ sites:
   - name: exventure.org
     repo: https://github.com/oestrich/ex_venture.git
     command: |
+      mix local.hex --force
+      mix local.rebar --force
+      mix deps.get
+      mix compile
+      mix docs
+      mv doc docs/elixir
+
       export LC_ALL=C.UTF-8
       export LANG=C.UTF-8
       mkdocs build -d $PUBLIC_WWW

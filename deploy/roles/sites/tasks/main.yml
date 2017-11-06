@@ -15,10 +15,24 @@
     validate: 'visudo -cf %s'
   become: true
 
+- name: Erlang Solutions apt-key
+  apt_key:
+    url: https://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc
+    state: present
+  become: true
+
+- name: Erlang Solutions apt
+  apt_repository:
+    repo: deb https://packages.erlang-solutions.com/ubuntu trusty contrib
+    state: present
+  become: true
+
 - name: Required packages
   apt: pkg={{ item }} state=present force="yes"  update_cache="yes"
   with_items:
     - mkdocs
+    - esl-erlang
+    - elixir
     - python3-pip
     - nodejs
     - git

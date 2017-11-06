@@ -4,12 +4,15 @@ PUBLIC_WWW=$HOME/sites/{{ item.name }}
 
 unset GIT_DIR
 
-git clone $GIT_REPO $TMP_GIT_CLONE
-
-cd $TMP_GIT_CLONE
+if [ -d "$TMP_GIT_CLONE" ]; then
+  cd $TMP_GIT_CLONE
+  git pull origin master
+  git clean -d -f
+else
+  git clone $GIT_REPO $TMP_GIT_CLONE
+  cd $TMP_GIT_CLONE
+fi
 
 {{ item.command }}
-
-rm -Rf $TMP_GIT_CLONE
 
 exit
